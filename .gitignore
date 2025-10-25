@@ -1,0 +1,29 @@
+# === THE MOST IMPORTANT RULE!!! ===
+# Ignore the properties file containing
+# the actual database passwords.
+db.properties
+
+# === Maven Generated Files ===
+# The build output folder
+/target/
+
+# === NetBeans Files ===
+# Project files, should not be shared
+/nbproject/
+/nb-configuration.xml
+/build/
+/dist/
+
+# === Other IDE Files (Good Practice) ===
+.idea/
+*.iml
+*.iws
+.vscode/
+
+# === Operating System Files ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+*.log.*
