@@ -1,0 +1,16 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package org.centrale.pappl.projetpapplstingtf.service;
+
+import org.springframework.stereotype.Service;
+
+/**
+ *
+ * @author srodr
+ */
+@Service
+public class LoginService {
+    
+}
