@@ -1,15 +1,143 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<!-- 1. Added the Thymeleaf namespace (xmlns:th) -->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 2. Link Bootstrap CSS using th:href for the correct path -->
+    <link rel="stylesheet" th:href="@{/resources/bootstrap-css/bootstrap.min.css}" />
+    
+    <!-- 3. (Optional) Link your custom style.css -->
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}" />
+    
+    <style>
+        /* Simple styles to center the form */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card card shadow-sm p-4">
+        <h3 class="card-title text-center mb-4">System Access</h3>
+        
+        <!-- 4. The Login Form -->
+        <!-- We don't use 'action' or 'method' here, we'll handle it with JS -->
+        <form id="login-form">
+            
+            <!-- Error Message (hidden by default) -->
+            <div id="login-error" class="alert alert-danger d-none" role="alert">
+                Incorrect username or password.
+            </div>
+            
+            <!-- User (Login) Field -->
+            <div class="mb-3">
+                <label for="username" class="form-label">Login (or Email)</label>
+                <!-- 
+                  The 'name' ("username") MUST match the field 
+                  in your AuthenticationRequest.java DTO 
+                -->
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            
+            <!-- Password Field -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <!-- 
+                  The 'name' ("password") MUST match the field 
+                  in your AuthenticationRequest.java DTO
+                -->
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">
+                    Login
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 5. Link Bootstrap JS (at the end of the body) -->
+    <script th:src="@{/resources/bootstrap-js/bootstrap.bundle.min.js}"></script>
+    
+    <!-- 6. The JavaScript for JWT Login (AJAX) -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            const loginForm = document.getElementById("login-form");
+            const loginError = document.getElementById("login-error");
+            
+            // 6.1. Define the login endpoint URL (using Thymeleaf for the path)
+            // This resolves issues with the project name (e.g., /ProjetPAPPLStingTfe)
+            const loginUrl = /*[[@{/api/auth/login}]]*/ '/api/auth/login';
+            
+            // 6.2. Define where to redirect on success
+            const redirectUrl = /*[[@{/}]]*/ '/';
+
+            // 6.3. Intercept the form submit
+            loginForm.addEventListener("submit", function(event) {
+                // Prevents the page from reloading
+                event.preventDefault();
+                
+                // Hide old errors
+                loginError.classList.add("d-none");
+
+                // 6.4. Get the form data
+                const formData = new FormData(loginForm);
+                const data = Object.fromEntries(formData.entries());
+                
+                // 6.5. Send the POST request with AJAX (Fetch)
+                fetch(loginUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data) // Convert data to JSON
+                })
+                .then(response => {
+                    // 6.6. If the response is not OK (e.g., 401 Unauthorized), throw an error
+                    if (!response.ok) {
+                        throw new Error('Login failed');
+                    }
+                    // If it's OK, parse the JSON response
+                    return response.json();
+                })
+                .then(result => {
+                    // ----------------------------------------------------
+                    // 6.7. IMPORTANT CHANGE! Save the token in a COOKIE
+                    // ----------------------------------------------------
+                    // (We assume 5 hours expiration, same as in JwtUtil)
+                    const fiveHoursInSeconds = 5 * 60 * 60; 
+                    // We use path=/ so the cookie is sent on all pages
+                    document.cookie = `jwtToken=${result.jwt}; path=/; max-age=${fiveHoursInSeconds}; SameSite=Strict`;
+                    
+                    // 6.8. Redirect the user to the main page (now protected)
+                    window.location.href = redirectUrl;
+                })
+                .catch(error => {
+                    // 6.9. ERROR! Show the error message
+                    console.error("Error during login:", error);
+                    loginError.classList.remove("d-none");
+                });
+            });
+        });
+        
+        /*]]>*/
+    </script>
+</body>
 </html>
