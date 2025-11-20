@@ -12,7 +12,7 @@ public class EntrepriseDao {
     private final JdbcTemplate jdbc;
 
     // Utilise le même bean JdbcTemplate (datasource) que pour "soutenance"
-    public EntrepriseDao(@Qualifier("jdbcSoutenance") JdbcTemplate jdbc) {
+    public EntrepriseDao(@Qualifier("studentJdbcTemplate") JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 

@@ -11,7 +11,7 @@ public class StatutDao {
 
     private final JdbcTemplate jdbc;
 
-    public StatutDao(@Qualifier("jdbcSoutenance") JdbcTemplate jdbc) {
+    public StatutDao(@Qualifier("studentJdbcTemplate") JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 

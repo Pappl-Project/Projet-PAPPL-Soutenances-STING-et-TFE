@@ -51,53 +51,22 @@ public class EtudiantController {
 
     }
 
-    // >>> Nouveau: Fiche par ID (JSON)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<?> one(@PathVariable int id) {
-        return service.getById(id).<ResponseEntity<?>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-
-    }
-
-    @GetMapping(value = "/{id}/full", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> full(@PathVariable("id") int id) {
         return service.getFullById(id)
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-    // EtudiantController.java
 
-    public static record EtudiantUpdateDto(String nom, String prenom, String typeStage) {
-
-    }
-
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    // Sur des méthodes comme update(...) dans le contrôleur. souvent pour créer/modifier des données
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody EtudiantUpdateDto in) {
-        // validations simples
-        if (in == null || in.nom() == null || in.prenom() == null || in.typeStage() == null) {
-            return ResponseEntity.badRequest().body("Champs manquants");
-        }
-        boolean ok = service.updateEtudiant(id, in.nom().trim(), in.prenom().trim(), in.typeStage().trim());
-        if (!ok) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Mise à jour impossible");
-        }
-        // Renvoie la fiche à jour pour recharger la vue
-        return service.getById(id)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Introuvable après update"));
-    }
-
-    @PostMapping(value = "/{id}/full", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<?> updateFull(@PathVariable("id") int id, @RequestBody EtudiantFullUpdateDto in) {
+    public ResponseEntity<?> updateFull(@PathVariable("id") int id, @RequestBody EtudiantFullUpdateDto payload) {
         // @PathVariable Récupère une partie de l’URL et la met dans un paramètre Java.
         // @RequestBody : « Le corps de la requête HTTP (JSON envoyé par le front) doit être converti en objet Java. »
         // Spring fait tout le mapping JSON → objet. 
         try {
-            service.updateFull(id, in);
+            service.updateFull(id, payload);
             // renvoie la fiche à jour
             return service.getFullById(id)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
@@ -122,10 +91,6 @@ public class EtudiantController {
     @ResponseBody
     public ResponseEntity<?> statuts() {
         return ResponseEntity.ok(statutDao.findAll());
-    }
-
-    public record RefProf(int id, String nom, String prenom, String login) {
-
     }
 
     @GetMapping(value = "professeurs", produces = MediaType.APPLICATION_JSON_VALUE)

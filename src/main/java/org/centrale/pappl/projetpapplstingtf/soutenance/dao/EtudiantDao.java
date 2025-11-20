@@ -31,7 +31,7 @@ public class EtudiantDao {
 
     private final JdbcTemplate jdbc;
 
-    public EtudiantDao(@Qualifier("jdbcSoutenance") JdbcTemplate jdbc) {
+    public EtudiantDao(@Qualifier("studentJdbcTemplate") JdbcTemplate jdbc) {
         //        @Qualifier : Quand il y a plusieurs beans du même type 
         //(par exemple plusieurs JdbcTemplate), @Qualifier permet de préciser lequel tu veux injecter.
         this.jdbc = jdbc;
@@ -178,8 +178,8 @@ public class EtudiantDao {
                 (Boolean) rs.getObject("so_reponse"),
                 rs.getString("st_nom"),
                 rs.getInt("st_id"),
-                List.of(),
-                List.of()
+                List.of(), // Sera rempli plus tard
+                List.of()  // Sera rempli plus tard
         ), idEtudiant)
         );
 
@@ -270,6 +270,7 @@ public class EtudiantDao {
         List<JuryDto> jury = queryJury(idEtudiant);
 
         EtudiantFullDto b = base.get();
+        // On reconstruit l'objet EtudiantFullDto avec les listes de présentations et de jury
         EtudiantFullDto merged = new EtudiantFullDto(
                 b.nom(), b.prenom(),
                 b.titre(), b.dateDebut(), b.dateFin(), b.typeStage(), b.signee(), b.annee(), b.entreprise(), b.entrepriseId(),

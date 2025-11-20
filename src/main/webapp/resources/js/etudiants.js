@@ -19,6 +19,15 @@
   let statutsCache     = null; // [{id, nom}]
   let profsCache       = null; // [{id, nom, prenom, login}]
 
+  // --- Fonctions pour le spinner de chargement ---
+  function showLoader() {
+    $('#loading-overlay').show();
+  }
+
+  function hideLoader() {
+    $('#loading-overlay').hide();
+  }
+
   function loadEntreprises() {
     if (entreprisesCache) return Promise.resolve(entreprisesCache);
     return fetch(AppConfig.urlEnt, { headers: { 'Accept':'application/json' }})
@@ -140,6 +149,7 @@
 
   // ----- Vue édition -----
   function renderFicheEdit(e){
+    showLoader();
     Promise.all([loadEntreprises(), loadStatuts(), loadProfesseurs()])
     .then(([ents, stats, profs]) => {
       const template = document.getElementById('template-fiche-edition').content.cloneNode(true);
@@ -230,19 +240,27 @@
     }).catch(err => {
       console.error('Référentiels:', err);
       $('#ficheContent').html('<span class="muted">Impossible de charger les référentiels.</span>');
+    })
+    .finally(() => {
+      hideLoader();
     });
   }
 
   function chargerFiche(id){
     currentId = id; 
     $('#ficheContent').html('<span class="muted">Chargement…</span>');
-    const url = AppConfig.urlBase + '/' + id + '/full';
+    const url = AppConfig.urlBase + '/' + id;
+    
+    showLoader();
     fetch(url, { headers: { 'Accept':'application/json' }})
       .then(r => { if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(e => { currentData = e; renderFicheView(e); })
       .catch(err => {
         console.error('Erreur fiche full:', err);
         $('#ficheContent').html('<span class="muted">Impossible de charger la fiche.</span>');
+      })
+      .finally(() => {
+        hideLoader();
       });
   }
 
@@ -303,7 +321,7 @@
       presentations: presList
     };
 
-    $('#ficheContent').html('<span class="muted">Enregistrement…</span>');
+    showLoader();
     fetch(`${AppConfig.urlBase}/${currentId}`, {
       method: 'PUT',
       headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
@@ -322,6 +340,9 @@
     .catch(err => {
       console.error('Erreur save full:', err);
       $('#ficheContent').html('<span class="muted">Échec: ' + err.message + '</span>');
+    })
+    .finally(() => {
+      hideLoader();
     });
   });
 })();

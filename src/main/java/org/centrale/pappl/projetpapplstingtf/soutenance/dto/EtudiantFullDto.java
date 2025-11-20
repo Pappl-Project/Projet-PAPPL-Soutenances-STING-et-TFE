@@ -1,36 +1,40 @@
-// EtudiantFullDto.java
 package org.centrale.pappl.projetpapplstingtf.soutenance.dto;
 
-
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-
+/**
+ * DTO de LECTURE (Output) pour la fiche complète d'un étudiant.
+ * Cet objet est construit par le backend pour être envoyé au frontend.
+ */
 public record EtudiantFullDto(
+    // Étudiant
     String nom,
     String prenom,
+
+    // Stage
     String titre,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // Indique le format de date/heure à utiliser lors de la conversion Java ↔ JSON.
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime dateDebut,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime dateFin,
     String typeStage,
     Boolean signee,
     String annee,
-    
-    String entreprise,
-    Integer entrepriseId, // <--- NOUVEAU : id_entreprise
-    
+    String entreprise, // Nom de l'entreprise
+    Integer entrepriseId,
+
+    // Soutenance
     Boolean confidentiel,
     Boolean maitreStage,
-    java.math.BigDecimal note,
+    BigDecimal note,
     Boolean reponse,
-    String statut,
-    Integer statutId,     // <--- NOUVEAU : id_statut
-    
-   
-    
-    java.util.List<PresentationDto> presentations,
-    java.util.List<JuryDto> jury
+    String statut, // Nom du statut
+    Integer statutId,
+
+    // Listes
+    List<PresentationDto> presentations,
+    List<JuryDto> jury
 ) {}
