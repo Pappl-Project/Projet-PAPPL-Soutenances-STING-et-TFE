@@ -80,7 +80,7 @@ public class SecurityConfig {
     UserDetailsService userDetailsService(@Qualifier("userDataSource") DataSource userDataSource) {
         // for condition of the tool it´s necessary to apply one role, so it´s applied one template of it
         String usersByUsernameQuery
-                = "SELECT login, mot_de_passe_hash, true FROM user_app WHERE login = ?";
+               = "SELECT login, mot_de_passe_hash, true FROM user_app WHERE ? IN (login, mail)";
 
         String authoritiesByUsernameQuery
                 = "SELECT login, 'ROLE_PROFESEUR' FROM user_app WHERE login = ?";
