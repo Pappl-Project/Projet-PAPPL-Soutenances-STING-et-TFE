@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 /**
  *
@@ -18,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @Configuration
 @PropertySource("classpath:db.properties")
+@ComponentScan(basePackages = "org.centrale.pappl.projetpapplstingtf") //IT MUST READ ALSO THE PROPERTIES
 public class RootConfig {
     
     @Autowired
