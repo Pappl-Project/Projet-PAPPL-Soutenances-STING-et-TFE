@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Étudiants | Liste & Fiche</title>
+
+    <!-- jQuery & DataTables (CDN) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+    <!-- Fichiers de projet -->
+    <link th:href="@{/resources/css/etudiants.css}" rel="stylesheet"/>
+    <script th:src="@{/resources/js/etudiants.js}" defer></script>
+  </head>
+  <body> 
+
+    <!-- Spinner de chargement global -->
+    <div id="loading-overlay" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="layout">  <!-- cree une grille -->
+
+      <!-- Colonne gauche: Liste -->
+      <div class="card">
+        <h2>Liste des étudiants</h2>
+        <table id="tEtudiants" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Type de stage</th>
+              <th>Entreprise</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="muted">Astuce: cliquez une ligne pour voir la fiche à droite.</p>
+      </div>
+
+      <!-- Colonne droite: Fiche -->
+      <div id="ficheEtudiant" class="card">
+        <h2>Fiche étudiant</h2>
+        <div id="ficheActions" style="margin-bottom:8px; display:none">
+          <button id="btnEdit">Modifier</button>
+          <button id="btnSave" style="display:none">Enregistrer</button>
+          <button id="btnCancel" style="display:none">Annuler</button>
+        </div>
+        <div id="ficheContent" class="muted">Chargement…</div>
+      </div>
+    </div>
+
+    <!-- ================================================================================= -->
+    <!--                             TEMPLATES POUR LA FICHE                               -->
+    <!-- ================================================================================= -->
+
+    <template id="template-fiche-lecture">
+      <div class="section">
+        <h3>Identité</h3>
+        <div><strong>Nom:</strong> <span data-field="nom">-</span></div>
+        <div><strong>Prénom:</strong> <span data-field="prenom">-</span></div>
+      </div>
+
+      <div class="section">
+        <h3>Stage</h3>
+        <div><strong>Titre:</strong> <span data-field="titre">-</span></div>
+        <div><strong>Type:</strong> <span data-field="typeStage">-</span></div>
+        <div><strong>Signée:</strong> <span data-field="signee">-</span></div>
+        <div><strong>Année:</strong> <span data-field="annee">-</span></div>
+        <div><strong>Entreprise:</strong> <span data-field="entreprise">-</span></div>
+        <div><strong>Début:</strong> <span data-field="dateDebut">-</span></div>
+        <div><strong>Fin:</strong> <span data-field="dateFin">-</span></div>
+      </div>
+
+      <div class="section">
+        <h3>Soutenance</h3>
+        <div><strong>Statut:</strong> <span data-field="statut">-</span></div>
+        <div><strong>Confidentiel:</strong> <span data-field="confidentiel">-</span></div>
+        <div><strong>Maître de stage présent:</strong> <span data-field="maitreStage">-</span></div>
+        <div><strong>Réponse:</strong> <span data-field="reponse">-</span></div>
+        <div><strong>Note:</strong> <span data-field="note">-</span></div>
+      </div>
+
+      <div class="section">
+        <h3>Présentations</h3>
+        <ul data-list="presentations"><li>Aucune présentation</li></ul>
+      </div>
+
+      <div class="section">
+        <h3>Jury</h3>
+        <ul data-list="jury"><li>Jury non défini</li></ul>
+      </div>
+    </template>
+
+    <template id="template-fiche-edition">
+      <div class="form-grid">
+        <div class="section">
+          <h3>Identité</h3>
+          <label>Nom</label>
+          <input data-field="nom" value="">
+          <label>Prénom</label>
+          <input data-field="prenom" value="">
+        </div>
+
+        <div class="section">
+          <h3>Stage</h3>
+          <label>Titre</label>
+          <input data-field="titre" value="">
+          <label>Début (yyyy-MM-dd HH:mm:ss)</label>
+          <input data-field="dateDebut" placeholder="2025-10-25 22:46:14">
+          <label>Fin (yyyy-MM-dd HH:mm:ss)</label>
+          <input data-field="dateFin" placeholder="2026-04-25 22:46:14">
+          <label>Type</label>
+          <input data-field="typeStage" value="">
+          <label>Signée</label>
+          <input type="checkbox" data-field="signee">
+          <label>Année</label>
+          <input data-field="annee" value="">
+          <label>Entreprise</label>
+          <select data-field="entrepriseId"></select>
+        </div>
+
+        <div class="section">
+          <h3>Soutenance</h3>
+          <label>Confidentiel</label>
+          <input type="checkbox" data-field="confidentiel">
+          <label>Maître de stage présent</label>
+          <input type="checkbox" data-field="maitreStage">
+          <label>Réponse</label>
+          <input type="checkbox" data-field="reponse">
+          <label>Note</label>
+          <input data-field="note" placeholder="ex: 14.5">
+          <label>Statut</label>
+          <select data-field="statutId"></select>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Présentations</h3>
+        <table id="tblPres" class="display" style="width:100%">
+          <thead>
+            <tr><th>Date</th><th>Heure</th><th>Lieu</th><th>Type</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button type="button" id="btnAddPres">+ Ajouter une présentation</button>
+      </div>
+
+      <div class="section">
+        <h3>Jury</h3>
+        <label>Président</label>
+        <select data-field="presidentId"></select>
+        <label>Rapporteur</label>
+        <select data-field="rapporteurId"></select>
+      </div>
+    </template>
+
+    <!-- Passage des URLs du backend (Thymeleaf) vers le JS externe -->
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      const AppConfig = {
+        urlList:   /*[[@{/etudiants/data}]]*/ '/etudiants/data',
+        urlBase:   /*[[@{/etudiants}]]*/ '/etudiants',
+        urlEnt:    /*[[@{/etudiants/entreprises}]]*/ '/etudiants/entreprises',
+        urlStatut: /*[[@{/etudiants/statuts}]]*/ '/etudiants/statuts',
+        urlProf:   /*[[@{/etudiants/professeurs}]]*/ '/etudiants/professeurs'
+      };
+      /*]]>*/
+    </script>
+    <!-- Le script est déjà chargé dans le <head> avec "defer", cette ligne n'est plus nécessaire -->
+  </body>
+</html>
