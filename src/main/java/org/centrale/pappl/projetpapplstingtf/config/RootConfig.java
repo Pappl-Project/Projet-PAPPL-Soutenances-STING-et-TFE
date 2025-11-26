@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 /**
  *
  * @author srodr
@@ -47,6 +48,12 @@ public class RootConfig {
         dataSource.setUsername(env.getProperty("user.db.username"));
         dataSource.setPassword(env.getProperty("user.db.password"));
         return dataSource;
+    }
+
+    // --- BEAN #3: The "Query Runner" for the students database ---
+    @Bean("studentJdbcTemplate")
+    public JdbcTemplate studentJdbcTemplate() {
+        return new JdbcTemplate(studentDataSource());
     }
     
 }
