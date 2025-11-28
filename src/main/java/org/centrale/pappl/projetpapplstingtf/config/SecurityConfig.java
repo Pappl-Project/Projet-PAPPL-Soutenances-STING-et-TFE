@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -44,10 +45,12 @@ public class SecurityConfig {
         return new JwtRequestFilter(jwtUtil);
     }
 
+    //General security configuration: rules and parameters 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .logout(logout -> logout.disable())
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers("/login", "/resources/**", "/api/auth/**").permitAll()
@@ -57,7 +60,7 @@ public class SecurityConfig {
                         -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .exceptionHandling(exceptions
-                        -> exceptions.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        -> exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 )
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -75,7 +78,7 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // TODO: Add via mail login
+    
     @Bean
     UserDetailsService userDetailsService(@Qualifier("userDataSource") DataSource userDataSource) {
         // for condition of the tool it´s necessary to apply one role, so it´s applied one template of it

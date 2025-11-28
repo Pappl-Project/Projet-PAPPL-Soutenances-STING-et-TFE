@@ -1,0 +1,123 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : 28 nov. 2025, 11:21:35
+    Author     : srodr
+*/
+:root {
+    --ecn-blue: #263645;     
+    --ecn-yellow: #FFD600;   
+    --ecn-bg: #f4f6f9;     
+}
+
+body {
+    background-color: var(--ecn-bg);
+    background-image: linear-gradient(135deg, #f4f6f9 0%, #e9ecef 100%);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+    border-top: 5px solid var(--ecn-blue);
+    box-shadow: 0 12px 28px rgba(38, 54, 69, 0.07); 
+}
+
+.login-header {
+    padding: 40px 30px 20px;
+    text-align: center;
+}
+
+.logo-img {
+    max-width: 180px;
+    margin-bottom: 15px;
+}
+
+.system-title {
+    color: var(--ecn-blue);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.form-control {
+    border: 1px solid rgba(38, 54, 69, 0.2);
+    border-radius: 6px;
+    transition: 0.25s ease;
+}
+
+.form-control:focus {
+    border-color: var(--ecn-blue);
+}
+
+.btn-ecn {
+    background-color: var(--ecn-blue);
+    border-color: var(--ecn-blue);
+    color: white;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 6px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(38, 54, 69, 0.18);
+
+}
+
+.btn-ecn:hover {
+    background-color: var(--ecn-yellow);
+    border-color: var(--ecn-yellow);
+    color: var(--ecn-blue); 
+    box-shadow: 0 6px 16px rgba(255, 214, 0, 0.5);
+   
+}
+
+.footer-text {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(38, 54, 69, 0.6);
+    margin: 20px 0;
+}
+
+
+label {
+    color: var(--ecn-blue);
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
+a {
+    color: var(--ecn-blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--ecn-yellow);
+}
+
+::placeholder {
+    color: rgba(38, 54, 69, 0.45);
+}
+
+
+.shadow-ecn {
+    box-shadow: 0 8px 20px rgba(38, 54, 69, 0.06);
+}

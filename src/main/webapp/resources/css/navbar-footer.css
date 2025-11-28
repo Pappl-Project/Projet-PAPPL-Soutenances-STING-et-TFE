@@ -1,0 +1,78 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : 28 nov. 2025, 00:03:59
+    Author     : srodr
+*/
+:root {
+    --primary-color: #003366; 
+    --accent-color: #00b8d4;  
+    --footer-bg: #1a1a1a;     
+    --text-light: #f8f9fa;
+}
+
+/* === NAVBAR === */
+.navbar-custom {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0; 
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-light) !important;
+    letter-spacing: 0.5px;
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar-custom .nav-link:hover {
+    color: var(--accent-color) !important;
+    transform: translateY(-2px); 
+}
+
+.navbar-custom .btn-logout {
+    background-color: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    transition: all 0.3s;
+}
+
+.navbar-custom .btn-logout:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+/* === FOOTER === */
+.footer-custom {
+    background-color: var(--footer-bg);
+    color: #adb5bd; 
+    font-size: 0.9rem;
+    border-top: 4px solid var(--accent-color);
+}
+
+.footer-custom a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-custom a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    background-color: #000;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
