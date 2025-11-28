@@ -142,6 +142,15 @@
       if (!isoString) return '';
       return dayjs(isoString).format('YYYY-MM-DD HH:mm:ss');
     },
+    /**
+ * Formate une date ISO pour l'affichage SANS l'heure
+ * (équivalent d'un <fmt:formatDate pattern="dd/MM/yyyy" /> côté JSP)
+ */
+    formatDate: function (isoString) {
+      if (!isoString) return '';
+      return dayjs(isoString).format('DD/MM/YYYY');
+    },
+
 
     /**
      * Convertit date + heure locales vers ISO pour l'envoi
@@ -171,8 +180,10 @@
     $fiche.find('[data-field="signee"]').text(e.signee === true ? 'Oui' : e.signee === false ? 'Non' : '-');
     $fiche.find('[data-field="annee"]').text(e.annee ?? '-');
     $fiche.find('[data-field="entreprise"]').text(e.entreprise ?? '-');
-    $fiche.find('[data-field="dateDebut"]').text(UI.formatDateTime(e.dateDebut) || '-');
-    $fiche.find('[data-field="dateFin"]').text(UI.formatDateTime(e.dateFin) || '-');
+    // Affichage "soutenance / stage" sans heure
+    $fiche.find('[data-field="dateDebut"]').text(UI.formatDate(e.dateDebut) || '-');
+    $fiche.find('[data-field="dateFin"]').text(UI.formatDate(e.dateFin) || '-');
+
     $fiche.find('[data-field="statut"]').text(e.statut ?? '-');
     $fiche.find('[data-field="confidentiel"]').text(e.confidentiel === true ? 'Oui' : e.confidentiel === false ? 'Non' : '-');
     $fiche.find('[data-field="maitreStage"]').text(e.maitreStage === true ? 'Oui' : e.maitreStage === false ? 'Non' : '-');
@@ -436,7 +447,32 @@
       { data: 'entreprise' }
     ],
     pageLength: 10,
-    createdRow: function (row) { $(row).addClass('row-hover'); }
+    createdRow: function (row, data) {
+      $(row).addClass('row-hover');
+
+      // Récupération du statut de soutenance (texte)
+      const statutRaw = (data.statut || '').toString().toLowerCase().trim();
+
+      let cssClass = null;
+
+      if (statutRaw === 'passée' || statutRaw === 'passee') {
+        cssClass = 'row-passee';       // vert
+      } else if (statutRaw === 'annulée' || statutRaw === 'annulee') {
+        cssClass = 'row-annulee';      // rouge
+      } else if (statutRaw === 'reportée' || statutRaw === 'reportee') {
+        cssClass = 'row-reportee';     // orange
+      } else if (statutRaw === 'à venir' || statutRaw === 'a venir' || statutRaw === 'avenir') {
+        cssClass = 'row-avenir';       // jaune
+      } else if (!statutRaw || statutRaw === 'non défini' || statutRaw === 'non defini') {
+        // Aucun statut réellement choisi
+        cssClass = 'row-undefined';    // rouge foncé
+      }
+
+      if (cssClass) {
+        $(row).addClass(cssClass);
+      }
+    }
+
   });
 
   // Événements DataTable

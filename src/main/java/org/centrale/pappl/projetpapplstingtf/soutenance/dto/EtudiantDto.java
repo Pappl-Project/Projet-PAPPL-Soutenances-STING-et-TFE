@@ -9,11 +9,12 @@ package org.centrale.pappl.projetpapplstingtf.soutenance.dto;
  * @author anas-
  */
 public record EtudiantDto(
-    int id,
-    String nom,
-    String prenom,
-    String typeStage,
-    String entreprise
-) {}
+        int id,
+        String nom,
+        String prenom,
+        String typeStage,
+        String entreprise,
+        String statut) {
+}
 
-// c'est pour la liste, 
+// c'est pour la liste,

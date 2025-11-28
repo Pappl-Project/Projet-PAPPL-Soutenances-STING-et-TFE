@@ -18,21 +18,25 @@ public class StatutDao {
     /** Liste des statuts pour un <select> */
     public List<RefItem> findAll() {
         final String sql = """
-            SELECT id_statut AS id, nom
-            FROM Statut
-            ORDER BY nom
-        """;
+                    SELECT id_statut AS id, nom
+                    FROM Statut
+                    ORDER BY nom
+                """;
         return jdbc.query(sql, (rs, i) -> new RefItem(
-            rs.getInt("id"),
-            rs.getString("nom")
-        ));
+                rs.getInt("id"),
+                rs.getString("nom")));
     }
 
     public boolean existsById(int idStatut) {
         Integer n = jdbc.queryForObject(
-            "SELECT COUNT(*) FROM Statut WHERE id_statut = ?",
-            Integer.class, idStatut
-        );
+                "SELECT COUNT(*) FROM Statut WHERE id_statut = ?",
+                Integer.class, idStatut);
         return n != null && n > 0;
+    }
+
+    public void ensureStatus(int id, String nom) {
+        if (!existsById(id)) {
+            jdbc.update("INSERT INTO Statut (id_statut, nom) VALUES (?, ?)", id, nom);
+        }
     }
 }
