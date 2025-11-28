@@ -19,26 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HomeController {
     
-    
-    @GetMapping("/")
-    public String helloWorld(Model model){
-        
-        String message = "This message comes from the Controller!";
-        
-        model.addAttribute("myMessage", message);
-        
-        return "index";
+//Home controller default page    
+@GetMapping("/")
+    public String root() {
+        return "redirect:/etudiants";
     }
-    
-    @PostMapping("/submit-form")
-    @ResponseBody 
-    public String handleForm(
-        
-            @RequestParam("username") String nameFromForm
-        ) {
-        
-        return "Hello, " + nameFromForm + "! Welcome.";
-    }
-    
-    
+
 }
