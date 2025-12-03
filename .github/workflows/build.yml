@@ -1,30 +1,31 @@
-name: Java CI with Maven and SonarCloud
+name: Java CI with SonarCloud Analysis
 
 on:
   push:
-    branches: '**'
+    branches:
+      - '**' 
   pull_request:
-    branches: [ "main", "develop"]
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    name: Build and Analyze
+    name: Build and analyze
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Importante para que Sonar vea el historial de git
+          fetch-depth: 0 # Necesario para que SonarQube obtenga todo el historial
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '21' 
           distribution: 'temurin'
-          cache: maven # Truco pro: esto activa el caché automáticamente sin escribir tanto código extra
+          cache: maven
 
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
-        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Pappl-Project_Projet-PAPPL-Soutenances-STING-et-TFEean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Pappl-Project_Projet-PAPPL-Soutenances-STING-et-TFE
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Pappl-Project_Projet-PAPPL-Soutenances-STING-et-TFE -Dsonar.organization=Pappl-Project -Dsonar.host.url=https://sonarcloud.io
