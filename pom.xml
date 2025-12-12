@@ -16,6 +16,7 @@
         <java.version>21</java.version>
         <jakartaee>11.0.0-M1</jakartaee>
         <jackson.version>2.15.2</jackson.version>
+        <sonar.organization>pappl-project</sonar.organization>
     </properties>
 
     <!-- versions -->
@@ -84,7 +85,7 @@
             <version>2.13.0</version>
         </dependency>
       
-      <!-- JACKSON - test -->
+        <!-- JACKSON - test -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -155,7 +156,19 @@
             <scope>provided</scope>
         </dependency>
 
-        
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>3.2.5</version> 
+            <scope>test</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.2.5</version> 
+        </dependency>
 
         
     </dependencies>
@@ -180,6 +193,13 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
                 
+            </plugin>
+            
+            <!-- SONARQUBE Configuration -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.10.0.2594</version>
             </plugin>
         </plugins>
     </build>

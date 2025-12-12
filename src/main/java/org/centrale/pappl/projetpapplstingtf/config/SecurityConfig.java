@@ -5,8 +5,8 @@
 package org.centrale.pappl.projetpapplstingtf.config;
 
 import javax.sql.DataSource;
-import org.centrale.pappl.projetpapplstingtf.filter.JwtRequestFilter;
-import org.centrale.pappl.projetpapplstingtf.util.JwtUtil;
+import org.centrale.pappl.projetpapplstingtf.auth.filter.JwtRequestFilter;
+import org.centrale.pappl.projetpapplstingtf.auth.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

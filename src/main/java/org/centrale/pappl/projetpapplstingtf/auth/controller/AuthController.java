@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package org.centrale.pappl.projetpapplstingtf.controller;
+package org.centrale.pappl.projetpapplstingtf.auth.controller;
 
-import org.centrale.pappl.projetpapplstingtf.dto.AuthenticationRequest;
-import org.centrale.pappl.projetpapplstingtf.dto.AuthenticationResponse;
-import org.centrale.pappl.projetpapplstingtf.util.JwtUtil;
+import org.centrale.pappl.projetpapplstingtf.auth.dto.AuthenticationRequest;
+import org.centrale.pappl.projetpapplstingtf.auth.dto.AuthenticationResponse;
+import org.centrale.pappl.projetpapplstingtf.auth.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
