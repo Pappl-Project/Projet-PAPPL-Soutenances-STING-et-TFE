@@ -2,6 +2,7 @@
 # Ignore the properties file containing
 # the actual database passwords.
 db.properties
+tree.txt
 
 # === Maven Generated Files ===
 # The build output folder

@@ -80,7 +80,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 username = jwtUtil.validateTokenAndGetUsername(jwt);
             } catch (JwtException e) {
                 System.out.println("Invalid JWT Token: " + e.getMessage());
-                // (Optional: if the token is invalid, tell the browser to delete the cookie)
                 Cookie badCookie = new Cookie("jwtToken", null);
                 badCookie.setMaxAge(0);
                 badCookie.setPath("/");
