@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author srodr
  */
 @Configuration
-@PropertySource(value = "classpath:db.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:db.properties")
 @ComponentScan(basePackages = "org.centrale.pappl.projetpapplstingtf") //IT MUST READ ALSO THE PROPERTIES
 public class RootConfig {
     
