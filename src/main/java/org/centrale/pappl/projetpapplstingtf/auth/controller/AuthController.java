@@ -28,7 +28,7 @@ public class AuthController {
     
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    // private final UserDetailsService userDetailsService; // Necesitaremos esto más tarde
+    // private final UserDetailsService userDetailsService;
     
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, 
