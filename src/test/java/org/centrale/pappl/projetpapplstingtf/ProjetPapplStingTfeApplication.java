@@ -6,8 +6,6 @@ package org.centrale.pappl.projetpapplstingtf;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 /**
  *
@@ -15,16 +13,9 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = "org.centrale.pappl.projetpapplstingtf")
-public class ProjetPapplStingTfeApplication extends SpringBootServletInitializer {
+public class ProjetPapplStingTfeApplication  {
 
-    // 1. For TOMCAT
-    // How to upload Tomcat when using for production
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(ProjetPapplStingTfeApplication.class);
-    }
-
-    // 2.This is for testing
+    // 1.This is for testing
     // Let Junit begin with the tests
     public static void main(String[] args) {
         SpringApplication.run(ProjetPapplStingTfeApplication.class, args);
