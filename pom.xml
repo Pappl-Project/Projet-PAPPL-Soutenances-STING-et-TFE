@@ -17,6 +17,8 @@
         <jakartaee>11.0.0-M1</jakartaee>
         <jackson.version>2.15.2</jackson.version>
         <sonar.organization>pappl-project</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <!-- versions -->
