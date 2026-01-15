@@ -5,8 +5,13 @@
 package org.centrale.pappl.projetpapplstingtf.soutenance.controller;
 
 import org.centrale.pappl.projetpapplstingtf.ProjetPapplStingTfeApplication;
+import org.centrale.pappl.projetpapplstingtf.soutenance.dao.EntrepriseDao;
+import org.centrale.pappl.projetpapplstingtf.soutenance.dao.EtudiantDao;
+import org.centrale.pappl.projetpapplstingtf.soutenance.dao.StatutDao;
 import org.centrale.pappl.projetpapplstingtf.soutenance.dto.EtudiantDto;
 import org.centrale.pappl.projetpapplstingtf.soutenance.dto.EtudiantFullDto;
+import org.centrale.pappl.projetpapplstingtf.soutenance.dto.ProfRefDto;
+import org.centrale.pappl.projetpapplstingtf.soutenance.dto.RefItem;
 import org.centrale.pappl.projetpapplstingtf.soutenance.service.EtudiantService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +44,25 @@ public class EtudiantControllerTest {
 
     @MockBean
     private EtudiantService etudiantService;
+
+    @MockBean
+    private EntrepriseDao entrepriseDao;
+
+    @MockBean
+    private StatutDao statutDao;
+
+    @MockBean
+    private EtudiantDao etudiantDao;
+
+    // --- GET /etudiants (pageListe) ---
+
+    @Test
+    @WithMockUser
+    public void testPageListe_ShouldReturnViewName() throws Exception {
+        mockMvc.perform(get("/etudiants"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("etudiants/liste"));
+    }
 
     // --- GET /etudiants/data ---
 
@@ -120,6 +144,21 @@ public class EtudiantControllerTest {
 
     @Test
     @WithMockUser
+    public void testUpdateFull_ShouldReturn404_WhenNotFoundAfterUpdate() throws Exception {
+        // GIVEN
+        String jsonPayload = "{}";
+        when(etudiantService.getFullById(1)).thenReturn(Optional.empty());
+
+        // WHEN & THEN
+        mockMvc.perform(put("/etudiants/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Introuvable")));
+    }
+
+    @Test
+    @WithMockUser
     public void testUpdateFull_ShouldReturn400_WhenServiceThrowsIllegalArgument() throws Exception {
         // GIVEN
         String jsonPayload = "{}";
@@ -146,5 +185,70 @@ public class EtudiantControllerTest {
                 .content(jsonPayload))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Erreur SQL")));
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateFull_ShouldReturn500_WhenGenericExceptionThrown() throws Exception {
+        // GIVEN
+        String jsonPayload = "{}";
+        doThrow(new RuntimeException("Unexpected error")).when(etudiantService).updateFull(eq(1), any());
+
+        // WHEN
+        mockMvc.perform(put("/etudiants/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Erreur serveur")));
+    }
+
+    // --- GET /etudiants/entreprises ---
+
+    @Test
+    @WithMockUser
+    public void testEntreprises_ShouldReturnList() throws Exception {
+        // GIVEN
+        List<RefItem> entreprises = List.of(new RefItem(1, "Acme"), new RefItem(2, "Tech Corp"));
+        when(entrepriseDao.findAll()).thenReturn(entreprises);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/etudiants/entreprises"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].nom").value("Acme"));
+    }
+
+    // --- GET /etudiants/statuts ---
+
+    @Test
+    @WithMockUser
+    public void testStatuts_ShouldReturnList() throws Exception {
+        // GIVEN
+        List<RefItem> statuts = List.of(new RefItem(1, "En cours"), new RefItem(2, "Terminé"));
+        when(statutDao.findAll()).thenReturn(statuts);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/etudiants/statuts"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].nom").value("En cours"));
+    }
+
+    // --- GET /etudiants/professeurs ---
+
+    @Test
+    @WithMockUser
+    public void testProfesseurs_ShouldReturnList() throws Exception {
+        // GIVEN
+        List<ProfRefDto> profs = List.of(
+                new ProfRefDto(1, "Dupont", "Pierre", "pdupont"),
+                new ProfRefDto(2, "Martin", "Marie", "mmartin"));
+        when(etudiantDao.findAllProfesseurs()).thenReturn(profs);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/etudiants/professeurs"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].nom").value("Dupont"));
     }
 }
