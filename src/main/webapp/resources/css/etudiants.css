@@ -1,0 +1,243 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+  padding: 12px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.muted {
+  color: #666;
+}
+
+.row-hover {
+  cursor: pointer;
+}
+
+.selected {
+  background: #eef6ff !important;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.form-grid label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.form-grid input,
+.form-grid select {
+  width: 100%;
+  padding: 6px;
+}
+
+.section {
+  margin-top: 14px;
+}
+
+.section h3 {
+  margin: 8px 0;
+}
+
+/* --- Spinner de chargement --- */
+#loading-overlay {
+  position: fixed;
+  /* Reste en place même si on scrolle */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  /* Fond blanc semi-transparent */
+  z-index: 1000;
+  /* Au-dessus de tout le reste */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  /* Gris clair */
+  border-top: 8px solid #3498db;
+}
+
+/* Bleu */
+.layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+  padding: 12px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.muted {
+  color: #666;
+}
+
+.row-hover {
+  cursor: pointer;
+}
+
+.selected {
+  background: #eef6ff !important;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.form-grid label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.form-grid input,
+.form-grid select {
+  width: 100%;
+  padding: 6px;
+}
+
+.section {
+  margin-top: 14px;
+}
+
+.section h3 {
+  margin: 8px 0;
+}
+
+/* --- Spinner de chargement --- */
+#loading-overlay {
+  position: fixed;
+  /* Reste en place même si on scrolle */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  /* Fond blanc semi-transparent */
+  z-index: 1000;
+  /* Au-dessus de tout le reste */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  /* Gris clair */
+  border-top: 8px solid #3498db;
+  /* Bleu */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Couleurs des lignes (Statut Soutenance) --- */
+table.dataTable tbody tr.row-passee {
+  background-color: #7cd290 !important;
+  /* Vert */
+}
+
+table.dataTable tbody tr.row-annulee {
+  background-color: #b46168 !important;
+  /* Rouge */
+}
+
+table.dataTable tbody tr.row-reportee {
+  background-color: #e38858 !important;
+  /* Orange */
+}
+
+table.dataTable tbody tr.row-avenir {
+  background-color: #e8e15a !important;
+  /* Jaune */
+}
+
+table.dataTable tbody tr.row-undefined {
+  background-color: #a45151 !important;
+  /* Rouge foncé */
+  color: #fff !important;
+}
+
+/* --- Légende horizontale --- */
+.legend-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  /* alignement horizontal */
+  flex-wrap: nowrap;
+  /* tout sur une seule ligne */
+  gap: 16px;
+  /* espace entre les items */
+  font-size: 0.9em;
+  align-items: center;
+}
+
+.legend-item {
+  display: inline-flex;
+  /* chaque item reste compact */
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  /* évite que le texte passe à la ligne */
+}
+
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+.bg-passee {
+  background-color: #7cd290;
+}
+
+.bg-annulee {
+  background-color: #b46168;
+}
+
+.bg-reportee {
+  background-color: #e38858;
+}
+
+.bg-avenir {
+  background-color: #e8e15a;
+}
+
+.bg-undefined {
+  background-color: #a45151;
+}

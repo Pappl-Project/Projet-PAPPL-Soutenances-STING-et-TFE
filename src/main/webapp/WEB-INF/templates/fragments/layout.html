@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <body>
+
+        <!-- NAVBAR -->
+        <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark navbar-custom">
+            <div class="container-fluid px-4"> 
+
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" href="#">
+                    <span class="text-white">STING ET TFE</span> 
+                    <span style="font-weight: 300; color: #e0e0e0;">Manager</span>
+                </a>
+
+                <!-- Toggler / Hamburger -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Menu colapsable -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+
+              
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <!-- Example links -->
+                    </ul>
+
+                    <div class="d-flex ms-auto">
+                        <a th:href="@{/logout}" class="btn btn-logout">
+                            Déconnexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- === FOOTER  === -->
+        <footer th:fragment="footer" class="footer-custom mt-auto pt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <h5 class="text-white text-uppercase mb-3">STING ET TFE Manager</h5>
+                        <p>Système de gestion des stages STING et TFE.</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <p><i class="bi bi-geo-alt me-2"></i> Nantes, France</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="footer-bottom text-center">
+                <span class="small">© 2026 Centrale Nantes. Tous droits réservés.</span>
+            </div>
+        </footer>
+
+    </body>
+</html>

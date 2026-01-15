@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-SonarQube Analisis</actionName>
+            <displayName>SonarQube Analisis</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>verify</goal>
+                <goal>sonar:sonar</goal>
+                <goal>-Psonar-local</goal>
+            </goals>
+            <properties>
+                <sonar.projectKey>Project-PAPPL-Sting-and-Tfe</sonar.projectKey>
+                <sonar.projectName>Project PAPPL Sting and Tfe</sonar.projectName>
+            </properties>
+        </action>
+    </actions>

@@ -13,32 +13,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- *
+ * Controller responsible for handling the application's root entry point.
+ * <p>
+ * This controller manages the landing page logic. Instead of serving a specific 
+ * dashboard immediately, it redirects users to the main functional area of the 
+ * application (the student list).
+ * </p>
  * @author srodr
  */
 @Controller
 public class HomeController {
     
-    
+    /**
+     * Handles HTTP GET requests to the root URL ("/").
+     * <p>
+     * This method acts as a default router. When a user accesses the domain name 
+     * without a specific path, they are automatically redirected to the 
+     * {@code /etudiants} endpoint.
+     * </p>
+     * @return A string indicating a redirection to the students page.
+     */
+    //Home controller default page    
     @GetMapping("/")
-    public String helloWorld(Model model){
-        
-        String message = "This message comes from the Controller!";
-        
-        model.addAttribute("myMessage", message);
-        
-        return "index";
+    public String root() {
+        // Redirects the browser to the student management page
+        return "redirect:/etudiants";
     }
-    
-    @PostMapping("/submit-form")
-    @ResponseBody 
-    public String handleForm(
-        
-            @RequestParam("username") String nameFromForm
-        ) {
-        
-        return "Hello, " + nameFromForm + "! Welcome.";
-    }
-    
-    
+
 }
