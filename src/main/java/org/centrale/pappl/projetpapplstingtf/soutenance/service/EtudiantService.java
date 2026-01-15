@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-// @Service : C'est une annotation qui dit à Spring : "Cette classe est un
-// service métier"
 public class EtudiantService {
 
     private final EtudiantDao dao;
@@ -31,10 +29,21 @@ public class EtudiantService {
         this.statutDao = statutDao;
     }
 
+    /**
+     * Récupère la liste de tous les étudiants.
+     * 
+     * @return Une liste d'objets EtudiantDto.
+     */
     public List<EtudiantDto> list() {
         return dao.findAllForList();
     }
 
+    /**
+     * Récupère un étudiant par son identifiant.
+     * 
+     * @param id L'identifiant de l'étudiant.
+     * @return Un Optional contenant l'étudiant si trouvé, sinon vide.
+     */
     public Optional<EtudiantDto> getById(int id) {
         return dao.findById(id);
     }
@@ -53,21 +62,43 @@ public class EtudiantService {
         return new BigDecimal(s.trim().replace(',', '.'));
     }
 
-    // EtudiantService.java (extrait)
+    /**
+     * Récupère les informations complètes d'un étudiant par son identifiant.
+     * 
+     * @param id L'identifiant de l'étudiant.
+     * @return Un Optional contenant les informations complètes de l'étudiant si
+     *         trouvé, sinon vide.
+     */
     public Optional<EtudiantFullDto> getFullById(int id) {
         return dao.findFullById(id);
     }
 
-    // EtudiantService.java
-
+    /**
+     * Met à jour les informations d'identité et de stage d'un étudiant.
+     * 
+     * @param id        L'identifiant de l'étudiant.
+     * @param nom       Le nouveau nom.
+     * @param prenom    Le nouveau prénom.
+     * @param typeStage Le type de stage.
+     * @return true si la mise à jour a réussi, false sinon.
+     */
     public boolean updateEtudiant(int id, String nom, String prenom, String typeStage) {
         int a = dao.updateIdentite(id, nom, prenom);
         int b = dao.updateTypeStage(id, typeStage);
         return (a >= 0 && b >= 0); // on considère OK si les deux passent
     }
 
-    @Transactional // « Les opérations de cette méthode (ou classe) doivent être faites dans une
-                   // transaction : soit tout réussit, soit tout est annulé. »
+    /**
+     * Met à jour l'ensemble des informations d'un étudiant (identité, stage,
+     * soutenance, jury, présentations).
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant à mettre à jour.
+     * @param in         Le DTO contenant les nouvelles données.
+     * @throws IllegalArgumentException Si le président et le rapporteur sont
+     *                                  identiques ou si des champs obligatoires
+     *                                  manquent pour la création d'un stage.
+     */
+    @Transactional
     public void updateFull(int idEtudiant, EtudiantFullUpdateDto in) {
 
         if (in.presidentId() != null && in.rapporteurId() != null
@@ -156,5 +187,4 @@ public class EtudiantService {
                 in.presentations() == null ? java.util.List.of() : in.presentations());
 
     }
-
 }

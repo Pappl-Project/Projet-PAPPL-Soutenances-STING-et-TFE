@@ -26,15 +26,12 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-@Repository // Annotation Spring indiquant que cette classe est un DAO (Data Access Object)
+@Repository
 public class EtudiantDao {
 
     private final JdbcTemplate jdbc;
 
     public EtudiantDao(@Qualifier("studentJdbcTemplate") JdbcTemplate jdbc) {
-        // @Qualifier : Quand il y a plusieurs beans du même type
-        // (par exemple plusieurs JdbcTemplate), @Qualifier permet de préciser lequel tu
-        // veux injecter.
         this.jdbc = jdbc;
     }
 
@@ -77,6 +74,12 @@ public class EtudiantDao {
     }
 
     /* ---------------------- Queries ---------------------- */
+
+    /**
+     * Récupère la liste sommaire de tous les étudiants pour affichage en liste.
+     * 
+     * @return Une liste d'objets EtudiantDto.
+     */
     public List<EtudiantDto> findAllForList() {
         final String sql = """
                     SELECT e.id_etudiant AS id,
@@ -101,6 +104,12 @@ public class EtudiantDao {
                 rs.getString("statut"))));
     }
 
+    /**
+     * Récupère un étudiant (version sommaire) par son identifiant.
+     * 
+     * @param id L'identifiant de l'étudiant.
+     * @return Un Optional contenant l'EtudiantDto si trouvé.
+     */
     public Optional<EtudiantDto> findById(int id) {
         final String sql = """
                     SELECT e.id_etudiant AS id,
@@ -136,6 +145,13 @@ public class EtudiantDao {
         });
     }
 
+    /**
+     * Récupère les données principales d'un étudiant pour le formulaire complet.
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant.
+     * @return Un Optional contenant l'EtudiantFullDto avec les données principales
+     *         (sans listes).
+     */
     public Optional<EtudiantFullDto> queryMain(int idEtudiant) {
         final String sql = """
                     SELECT
@@ -192,6 +208,12 @@ public class EtudiantDao {
     }
 
     // 2.2 Présentations (0..n lignes)
+    /**
+     * Récupère la liste des présentations (soutenances) d'un étudiant.
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant.
+     * @return La liste des présentations triées par date.
+     */
     private List<PresentationDto> queryPresentations(int idEtudiant) {
         final String sql = """
                     SELECT
@@ -216,6 +238,12 @@ public class EtudiantDao {
     }
 
     // 2.3 Jury (0..n lignes)
+    /**
+     * Récupère la liste des membres du jury pour un étudiant.
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant.
+     * @return La liste des jurys triés par rôle et nom.
+     */
     private List<JuryDto> queryJury(int idEtudiant) {
         final String sql = """
                     SELECT
@@ -242,6 +270,11 @@ public class EtudiantDao {
                 rs.getString("j_role")), idEtudiant));
     }
 
+    /**
+     * Récupère la liste de tous les professeurs.
+     * 
+     * @return Une liste de ProfRefDto.
+     */
     public List<ProfRefDto> findAllProfesseurs() {
         final String sql = """
                     SELECT p.id_responsable AS id, p.nom, p.prenom, p.login
@@ -256,6 +289,13 @@ public class EtudiantDao {
     }
 
     // 2.4 API publique
+    /**
+     * Récupère l'objet composite complet pour un étudiant (infos + présentations +
+     * jury).
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant.
+     * @return Un Optional contenant l'EtudiantFullDto complet.
+     */
     public Optional<EtudiantFullDto> findFullById(int idEtudiant) {
         Optional<EtudiantFullDto> base = queryMain(idEtudiant);
         if (base.isEmpty()) {
@@ -278,16 +318,38 @@ public class EtudiantDao {
     }
 
     /* ---------------------- Updates / Inserts ---------------------- */
+
+    /**
+     * Met à jour l'identité (nom, prénom) d'un étudiant.
+     * 
+     * @param id     L'identifiant de l'étudiant.
+     * @param nom    Le nouveau nom.
+     * @param prenom Le nouveau prénom.
+     * @return Le nombre de lignes affectées (devrait être 1).
+     */
     public int updateIdentite(int id, String nom, String prenom) {
         final String sql = "UPDATE Etudiant SET nom = ?, prenom = ? WHERE id_etudiant = ?";
         return withSqlDiag(sql, new Object[] { nom, prenom, id }, () -> jdbc.update(sql, nom, prenom, id));
     }
 
+    /**
+     * Met à jour le type de stage d'un étudiant.
+     * 
+     * @param id        L'identifiant de l'étudiant.
+     * @param typeStage Le nouveau type de stage.
+     * @return Le nombre de lignes affectées.
+     */
     public int updateTypeStage(int id, String typeStage) {
         final String sql = "UPDATE Stage SET type_stage = ? WHERE id_etudiant = ?";
         return withSqlDiag(sql, new Object[] { typeStage, id }, () -> jdbc.update(sql, typeStage, id));
     }
 
+    /**
+     * Trouve l'identifiant du stage associé à un étudiant.
+     * 
+     * @param idEtudiant L'identifiant de l'étudiant.
+     * @return L'identifiant du stage ou null s'il n'en a pas.
+     */
     public Integer findStageIdByEtudiant(int idEtudiant) {
         final String sql = """
                     SELECT id_stage FROM Stage
@@ -299,6 +361,19 @@ public class EtudiantDao {
                 () -> jdbc.query(sql, rs -> rs.next() ? rs.getInt("id_stage") : null, idEtudiant));
     }
 
+    /**
+     * Crée un nouveau stage.
+     * 
+     * @param idEtudiant   L'identifiant de l'étudiant.
+     * @param titre        Titre du stage.
+     * @param debut        Date de début.
+     * @param fin          Date de fin.
+     * @param typeStage    Type de stage.
+     * @param signee       Si la convention est signée.
+     * @param annee        Année académique.
+     * @param entrepriseId Identifiant de l'entreprise.
+     * @return L'identifiant généré du stage.
+     */
     public Integer insertStage(int idEtudiant, String titre, LocalDateTime debut, LocalDateTime fin,
             String typeStage, Boolean signee, String annee, Integer entrepriseId) {
         final String sqlIns = """
@@ -314,6 +389,19 @@ public class EtudiantDao {
         return withSqlDiag(sqlSeq, new Object[] {}, () -> jdbc.queryForObject(sqlSeq, Integer.class));
     }
 
+    /**
+     * Met à jour un stage existant.
+     * 
+     * @param idStage      L'identifiant du stage.
+     * @param titre        Titre du stage.
+     * @param debut        Date de début.
+     * @param fin          Date de fin.
+     * @param typeStage    Type de stage.
+     * @param signee       Si la convention est signée.
+     * @param annee        Année académique.
+     * @param entrepriseId Identifiant de l'entreprise.
+     * @return Le nombre de lignes affectées.
+     */
     public int updateStage(int idStage, String titre, LocalDateTime debut, LocalDateTime fin,
             String typeStage, Boolean signee, String annee, Integer entrepriseId) {
         final String sql = """
@@ -325,12 +413,29 @@ public class EtudiantDao {
                 () -> jdbc.update(sql, titre, debut, fin, typeStage, signee, annee, entrepriseId, idStage));
     }
 
+    /**
+     * Trouve l'identifiant de la soutenance liée à un stage.
+     * 
+     * @param idStage L'identifiant du stage.
+     * @return L'identifiant de la soutenance ou null.
+     */
     public Integer findSoutenanceIdByStage(int idStage) {
         final String sql = "SELECT id_soutenance FROM Soutenance WHERE id_stage = ? LIMIT 1";
         return withSqlDiag(sql, new Object[] { idStage },
                 () -> jdbc.query(sql, rs -> rs.next() ? rs.getInt("id_soutenance") : null, idStage));
     }
 
+    /**
+     * Crée une nouvelle soutenance.
+     * 
+     * @param idStage      L'identifiant du stage.
+     * @param confidentiel Si confidentiel.
+     * @param maitreStage  Si le maître de stage est présent.
+     * @param note         La note.
+     * @param reponse      Réponse.
+     * @param statutId     Identifiant du statut.
+     * @return L'identifiant généré de la soutenance.
+     */
     public Integer insertSoutenance(int idStage, Boolean confidentiel, Boolean maitreStage,
             java.math.BigDecimal note, Boolean reponse, Integer statutId) {
         final String sqlIns = """
@@ -345,6 +450,17 @@ public class EtudiantDao {
         return withSqlDiag(sqlSeq, new Object[] {}, () -> jdbc.queryForObject(sqlSeq, Integer.class));
     }
 
+    /**
+     * Met à jour une soutenance existante.
+     * 
+     * @param idSoutenance L'identifiant de la soutenance.
+     * @param confidentiel Si confidentiel.
+     * @param maitreStage  Si le maître de stage est présent.
+     * @param note         La note.
+     * @param reponse      Réponse.
+     * @param statutId     Identifiant du statut.
+     * @return Le nombre de lignes affectées.
+     */
     public int updateSoutenance(int idSoutenance, Boolean confidentiel, Boolean maitreStage,
             java.math.BigDecimal note, Boolean reponse, Integer statutId) {
         final String sql = """
@@ -356,6 +472,15 @@ public class EtudiantDao {
                 () -> jdbc.update(sql, confidentiel, maitreStage, note, reponse, statutId, idSoutenance));
     }
 
+    /**
+     * Met à jour l'étudiant (doublon possible avec updateIdentite, mais conservé
+     * pour cohérence).
+     * 
+     * @param idEtudiant Identifiant.
+     * @param nom        Nom.
+     * @param prenom     Prénom.
+     * @return Lignes modifiées.
+     */
     public int updateEtudiant(int idEtudiant, String nom, String prenom) {
         final String sql = "UPDATE Etudiant SET nom = ?, prenom = ? WHERE id_etudiant = ?";
         return withSqlDiag(sql, new Object[] { nom, prenom, idEtudiant },
@@ -372,6 +497,13 @@ public class EtudiantDao {
                 () -> jdbc.query(sql, rs -> rs.next() ? rs.getInt("id_role") : null, type));
     }
 
+    /**
+     * Met à jour la composition du jury (président et rapporteur).
+     * 
+     * @param idSoutenance L'identifiant de la soutenance.
+     * @param presidentId  L'identifiant du président (peut être null).
+     * @param rapporteurId L'identifiant du rapporteur (peut être null).
+     */
     public void updateJury(int idSoutenance, Integer presidentId, Integer rapporteurId) {
         Integer idRolePresident = findRoleIdByType("Président");
         Integer idRoleRapporteur = findRoleIdByType("Rapporteur");
@@ -417,7 +549,7 @@ public class EtudiantDao {
                     SELECT id_lieu
                     FROM lieu
                     WHERE lower(nom) = lower(?)
-                      AND ( ( ? IS NULL AND type_lieu IS NULL ) OR type_lieu = ? )
+                       AND ( ( ? IS NULL AND type_lieu IS NULL ) OR type_lieu = ? )
                     LIMIT 1
                 """;
         Integer id = withSqlDiag(sqlSel, new Object[] { nom, type, type },
@@ -435,6 +567,13 @@ public class EtudiantDao {
                 () -> jdbc.query(sqlIns, rs -> rs.next() ? rs.getInt(1) : null, nom, type));
     }
 
+    /**
+     * Synchronise la liste des présentations (supprime les anciennes et insère les
+     * nouvelles).
+     * 
+     * @param idSoutenance L'identifiant de la soutenance.
+     * @param list         La liste des nouvelles présentations.
+     */
     public void syncPresentations(int idSoutenance, List<PresentationUpdateDto> list) {
         final String sqlDel = "DELETE FROM Presentee WHERE id_soutenance = ?";
         withSqlDiag(sqlDel, new Object[] { idSoutenance }, () -> jdbc.update(sqlDel, idSoutenance));

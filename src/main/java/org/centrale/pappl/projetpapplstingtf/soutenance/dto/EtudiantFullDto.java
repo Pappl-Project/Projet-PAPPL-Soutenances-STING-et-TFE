@@ -6,35 +6,34 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * DTO de LECTURE (Output) pour la fiche complète d'un étudiant.
- * Cet objet est construit par le backend pour être envoyé au frontend.
+ * DTO de lecture complet pour la fiche d'un étudiant.
+ * Contient les informations de l'étudiant, du stage, de la soutenance, du jury
+ * et des présentations.
  */
 public record EtudiantFullDto(
-    // Étudiant
-    String nom,
-    String prenom,
+        // Étudiant
+        String nom,
+        String prenom,
 
-    // Stage
-    String titre,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime dateDebut,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime dateFin,
-    String typeStage,
-    Boolean signee,
-    String annee,
-    String entreprise, // Nom de l'entreprise
-    Integer entrepriseId,
+        // Stage
+        String titre,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime dateDebut,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime dateFin,
+        String typeStage,
+        Boolean signee,
+        String annee,
+        String entreprise, // Nom de l'entreprise
+        Integer entrepriseId,
 
-    // Soutenance
-    Boolean confidentiel,
-    Boolean maitreStage,
-    BigDecimal note,
-    Boolean reponse,
-    String statut, // Nom du statut
-    Integer statutId,
+        // Soutenance
+        Boolean confidentiel,
+        Boolean maitreStage,
+        BigDecimal note,
+        Boolean reponse,
+        String statut, // Nom du statut
+        Integer statutId,
 
-    // Listes
-    List<PresentationDto> presentations,
-    List<JuryDto> jury
-) {}
+        // Listes
+        List<PresentationDto> presentations,
+        List<JuryDto> jury) {
+}
