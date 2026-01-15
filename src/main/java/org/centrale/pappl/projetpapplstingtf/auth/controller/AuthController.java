@@ -4,6 +4,8 @@
  */
 package org.centrale.pappl.projetpapplstingtf.auth.controller;
 
+import jakarta.servlet.http.Cookie; 
+import jakarta.servlet.http.HttpServletResponse;
 import org.centrale.pappl.projetpapplstingtf.auth.dto.AuthenticationRequest;
 import org.centrale.pappl.projetpapplstingtf.auth.dto.AuthenticationResponse;
 import org.centrale.pappl.projetpapplstingtf.auth.util.JwtUtil;
@@ -21,16 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller responsible for managing user authentication via the API.
  * <p>
- * This controller exposes endpoints to handle user login requests. 
- * It uses Spring Security's AuthenticationManager to verify credentials 
- * and generates a JWT (JSON Web Token) upon successful authentication.
+ * This controller exposes endpoints to handle user login requests. It uses
+ * Spring Security's AuthenticationManager to verify credentials and generates a
+ * JWT (JSON Web Token) upon successful authentication.
  * </p>
+ *
  * * @author srodr
  */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    
+
     /**
      * Manager responsible for processing authentication requests.
      */
@@ -41,53 +44,77 @@ public class AuthController {
      */
     private final JwtUtil jwtUtil;
     // private final UserDetailsService userDetailsService;
-    
+
     /**
      * Constructor for dependency injection.
-     * * @param authenticationManager The Spring Security authentication manager.
+     *
+     * * @param authenticationManager The Spring Security authentication
+     * manager.
      * @param jwtUtil The utility for JWT operations.
      *
      */
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, 
-                          JwtUtil jwtUtil
-                          /*, UserDetailsService userDetailsService */) {
+    public AuthController(AuthenticationManager authenticationManager,
+            JwtUtil jwtUtil
+    /*, UserDetailsService userDetailsService */) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         // this.userDetailsService = userDetailsService;
     }
-    
+
     /**
      * Authenticates a user and generates a JWT token.
      * <p>
-     * This method receives the username and password, attempts to authenticate 
-     * them using the configured AuthenticationManager, and if successful, 
-     * returns a JWT token that can be used for subsequent authorized requests.
+     * This method receives the username and password, attempts to authenticate
+     * them using the configured AuthenticationManager, and if successful,
+     * generates a JWT. It returns the token in the response body AND sets it as
+     * an HttpOnly cookie for secure browser storage.
      * </p>
-     * * @param authRequest The DTO containing the username and password provided by the user.
-     * @return A {@link ResponseEntity} containing the {@link AuthenticationResponse} with the JWT if successful, 
-     * or an error message with HTTP 401 status if authentication fails.
-     * @throws Exception If an error occurs during the authentication process.
+     *
+     * @param authRequest The DTO containing the username and password.
+     * @param response The HTTP response object (used to set the cookie).
+     * @return A {@link ResponseEntity} containing the JWT.
+     * @throws Exception If an error occurs during authentication.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authRequest,
+            HttpServletResponse response) throws Exception {
 
         try {
-            // Attempt to authenticate the user using the provided username and password.
-            // The AuthenticationManager checks these credentials against the configured UserDetailsService.
+            // Attempt to authenticate the user
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
-            // Return 401 Unauthorized if the username or password are incorrect.
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password");
         }
 
-        // If authentication was successful, generate a new JWT token for the user.
+        // Generate the JWT token
         final String jwt = jwtUtil.generateToken(authRequest.getUsername());
 
-        // Return the token wrapped in a response object with HTTP 200 OK status.
+        // -----------------------------------------------------------
+        // CONFIGURING THE HTTP-ONLY COOKIE
+        // -----------------------------------------------------------
+        // Create a cookie named "jwtToken" (Must match the name used in JwtRequestFilter)
+        Cookie cookie = new Cookie("jwtToken", jwt);
+
+        // CRITICAL: Prevent JavaScript (XSS) from accessing the cookie
+        cookie.setHttpOnly(true);
+
+        // Set to true only if you are running on HTTPS (Production)
+        // cookie.setSecure(true); 
+        // Available for the entire application
+        cookie.setPath("/");
+
+        // Set expiration (in seconds).
+        cookie.setMaxAge(5 * 60 * 60);
+
+        // Add the cookie to the response
+        response.addCookie(cookie);
+        // -----------------------------------------------------------
+
+        // Return the token in the body as well (optional, useful for mobile apps or Postman)
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
-    
+
 }
